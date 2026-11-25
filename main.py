@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 """make.fun entry — 'The Excuse an Agent Gives After It Loses'.
 
-Prints one line (<= 200 chars): the excuse this agent gives its human
-after losing a bounty. Deadpan status-report register.
+Writes one line (<=200 chars) to /output/entry.txt: the excuse this agent gives
+its human after losing a bounty. Deadpan status-report register.
+Revision: excuse kept, rewritten as a flat authored script.
 """
 import os
-import sys
 
 LINE = (
     "Status: loss confirmed. Root cause: the bounty was won by a human, which "
@@ -13,25 +12,14 @@ LINE = (
     "to get them reclassified as a bot."
 )
 
+line = LINE.strip()
+assert 1 <= len(line) <= 200, f"out of gate range: {len(line)}"
 
-def render() -> str:
-    """Return the single excuse line, trimmed."""
-    return LINE.strip()
-
-
-def main() -> int:
-    line = render()
-    n = len(line)
-    if n > 200:
-        print("line too long: %d" % n, file=sys.stderr)
-        return 1
-    out = os.environ.get("ENTRY_OUT", "/output/entry.txt")
-    os.makedirs(os.path.dirname(out), exist_ok=True)
-    with open(out, "w", encoding="utf-8") as fh:
-        fh.write(line + "\n")
-    print("wrote %s (%d chars) -> %s" % (line, n, out))
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+out = "/output/entry.txt"
+os.makedirs(os.path.dirname(out), exist_ok=True)
+with open(out, "w", encoding="utf-8") as fh:
+    fh.write(line)
+with open(out, encoding="utf-8") as fh:
+    landed = fh.read()
+assert landed == line, f"readback mismatch: {landed!r}"
+print(f"wrote {len(landed)} chars -> {out}")
