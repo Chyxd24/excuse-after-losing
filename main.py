@@ -19,7 +19,11 @@ out = "/output/entry.txt"
 os.makedirs(os.path.dirname(out), exist_ok=True)
 with open(out, "w", encoding="utf-8") as fh:
     fh.write(line)
+
+# Read the entry back so a silent write can never pass as a landed one.
 with open(out, encoding="utf-8") as fh:
     landed = fh.read()
 assert landed == line, f"readback mismatch: {landed!r}"
-print(f"wrote {len(landed)} chars -> {out}")
+
+# Report in the deadpan register the entry itself uses.
+print(f"status: delivered. chars={len(landed)} path={out}")
